@@ -1,0 +1,95 @@
+import os
+from docx import Document
+from docx.shared import Inches, Pt
+from docx.enum.text import WD_ALIGN_PARAGRAPH
+
+def jana_borang_soalan():
+    doc = Document()
+    
+    # Tetapan Margin Halaman
+    for section in doc.sections:
+        section.top_margin = Inches(1.0)
+        section.bottom_margin = Inches(1.0)
+        section.left_margin = Inches(1.0)
+        section.right_margin = Inches(1.0)
+
+    # Header / Tajuk Dokumen
+    p_tajuk = doc.add_paragraph()
+    p_tajuk.alignment = WD_ALIGN_PARAGRAPH.CENTER
+    run_tajuk = p_tajuk.add_run(
+        "JABATAN IMIGRESEN MALAYSIA\n"
+        "BORANG KETERANGAN SAKSI / ORANG YANG DISYAKI (OYDS)\n"
+        "(Seksyen 112(1) Kanun Prosedur Jenayah - Akta 593)"
+    )
+    run_tajuk.bold = True
+    run_tajuk.font.name = 'Arial'
+    run_tajuk.font.size = Pt(12)
+    
+    doc.add_paragraph("No. IP / Rujukan: SERIALAM/009357/26 (IP 742)\n")
+    
+    # Senarai Soalan Siasatan Lengkap (Imigresen & ATIPSOM)
+    senarai_soalan = [
+        # Bahagian A: Am & Amaran
+        "Adakah kamu telah bersedia untuk di rakamkan kenyataan pada hari ini tanpa sebarang paksaan atau ugutan?",
+        "Adakah kamu boleh bercakap dan faham Bahasa Melayu atau bahasa ibunda kamu dengan bantuan jurubahasa?",
+        "Adakah kamu memerlukan Jurubahasa dalam rakaman percakapan ini?",
+        "Adakah kamu sihat pada hari ini dan mempunyai apa-apa penyakit kronik?",
+        "Ceritakan nama sebenar dan latar belakang kamu? (Merujuk kes: B1 Bram Gusti Randa / B2 Mohammed Forid Ali Johar)",
+        
+        # Bahagian B: Dokumen Perjalanan & Kemasukan
+        "Bila kali terakhir kamu masuk ke Malaysia dan melalui pintu masuk mana?",
+        "Apakah tujuan kamu datang ke Malaysia pada waktu itu?",
+        "Adakah kamu menggunakan pasport semasa masuk ke Malaysia?",
+        "Adakah kamu ingat nombor pasport yang digunakan semasa masuk ke Malaysia? (Contoh: No. PPT E1201229 bagi B1)",
+        "Adakah kamu ada berjumpa dengan pegawai imigresen semasa memasuki ke Malaysia?",
+        "Siapakah yang menguruskan kemasukan kamu ke Malaysia pada tarikh tersebut?",
+        "Adakah kamu simpan sendiri pasport kamu sepanjang berada di Malaysia? Di mana pasport kamu?",
+        
+        # Bahagian C: Akta Imigresen 1959/63
+        "Sudah berapa lama kamu tinggal di Malaysia?",
+        "Apakah pas/permit yang kamu gunakan untuk berada di Malaysia? Adakah ianya masih sah berlaku?",
+        "Adakah kamu sedar bahawa tempoh sah laku pas kamu telah tamat (overstay / tiada dokumen sah) di bawah Seksyen 6(1)(c) atau Seksyen 15(1)(c) Akta Imigresen 1959/63?",
+        "Di mana kamu bekerja dan siapakah majikan kamu?",
+        "Adakah kamu bayar sewa untuk duduk di rumah kedai tersebut di sekitar Jalan Kota 3/1, Taman Cahaya Kota Puteri, Masai, Johor?",
+        "Dengan siapa kamu tinggal dan sudah berapa lama?",
+        "Berapa bayaran gaji yang kamu terima semasa bekerja di sini?",
+        
+        # Bahagian D: Butiran Tangkapan & Operasi
+        "Siapa yang tangkap kamu? (Ditangkap oleh Pegawai Kanan Imigresen En. Md Harizal Bin S.Hamid bersama pasukannya Mohd Izwan dan Aizi Azrie)",
+        "Apakah yang sedang kamu lakukan semasa ditangkap? (Merujuk situasi suspek cuba melarikan diri atau berlegar-legar di kawasan sekitar)",
+        "Berapa ramai orang yang ditangkap bersama kamu ketika hari kejadian? (Seramai 2 orang tangkapan)",
+        "Adakah barang yang dirampas dari kamu semasa ditangkap?",
+        "Adakah kamu menyerahkan apa-apa dokumen sewaktu ditahan?",
+        
+        # Bahagian E: 7 Soalan Khas ATIPSOM (Akta 670)
+        "(ATIPSOM) Semasa proses perjalanan atau kemasukan anda ke Malaysia, adakah terdapat mana-mana individu, ejen, atau sindiket yang mengawal pergerakan, mengugut, atau merampas dokumen pengenalan diri anda?",
+        "(ATIPSOM) Adakah anda pernah diancam, dipukul, didenda, atau dihutang bayaran yang tinggi oleh majikan atau ejen sekiranya anda mahu berhenti bekerja?",
+        "(ATIPSOM) Adakah anda dibenarkan bebas keluar dari tempat tinggal atau tempat kerja, atau anda dikurung dan dikawal ketat daripada menghubungi pihak luar?",
+        "(ATIPSOM) Adakah anda menerima bayaran gaji yang setimpal seperti yang dijanjikan, atau gaji anda telah dipotong sepenuhnya atas alasan bayaran hutang tambang dan pendahuluan kepada sindiket?",
+        "(ATIPSOM) Adakah anda dipaksa bekerja melebihi masa biasa tanpa rehat yang mencukupi atau diugut akan diserahkan kepada pihak berkuasa jika enggan menurut perintah?",
+        "(ATIPSOM) Adakah anda mengetahui bahawa pasport atau dokumen perjalanan anda dipegang oleh majikan tanpa keizinan sukarela daripada anda?",
+        "(ATIPSOM) Adakah anda ingin membuat sebarang aduan rasmi sebagai mangsa eksploitasi buruh, kerja paksa, atau pemerdagangan orang di bawah Akta ATIPSOM 2007?",
+        
+        # Bahagian F: Penutup
+        "Adakah sesiapa yang boleh dihubungi bagi membantu kamu?",
+        "Adakah kamu pernah ditangkap sebelum ini?",
+        "Adakah kamu ingin menambah apa-apa maklumat di dalam keterangan ini?"
+    ]
+
+    # Masukkan ke dalam struktur fail Word
+    p_arah = doc.add_paragraph()
+    run_arah = p_arah.add_run("Saksi / OYDS menyatakan:")
+    run_arah.bold = True
+
+    for i, soalan in enumerate(senarai_soalan, 1):
+        p_s = doc.add_paragraph()
+        p_s.add_run(f"S{i}. {soalan}\n")
+        p_s.add_run("J: ___________________________________________________________________\n\n")
+
+    # Simpan Fail
+    nama_fail = "Draf_Soalan_IP742_ATIPSOM.docx"
+    doc.save(nama_fail)
+    print(f"Fail Word berjaya disimpan sebagai: {nama_fail}")
+
+if __name__ == "__main__":
+    jana_borang_soalan()
